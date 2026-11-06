@@ -9,7 +9,7 @@ from src.apt_graph.main import main
 
 
 class StageTests(unittest.TestCase):
-    """Stage 3 prints resolved graph edges without configuration output."""
+    """Stage 4 reports reverse relationships instead of forward edges."""
 
     def test_direct_output(self):
         """Use the requested version even if a newer record is present."""
@@ -19,10 +19,10 @@ class StageTests(unittest.TestCase):
         output = StringIO()
         with patch('src.apt_graph.main.download_index', return_value=data):
             with redirect_stdout(output):
-                result = main(['--package', 'bash', '--version', '1'])
+                result = main(['--package', 'libc6', '--version', '2'])
         self.assertEqual(result, 0)
         self.assertEqual(output.getvalue(),
-                         'bash@1 -> libc6@2\nlibc6@2 -> (none)\n')
+                         'libc6@2 -> bash@1\nbash@1 -> (none)\n')
 
     def test_network_error(self):
         """Network failures produce a nonzero result, not a traceback."""

@@ -1,4 +1,4 @@
-"""Stage 3: build the versioned graph with recursive breadth-first search."""
+"""Stage 4: show reverse dependencies using the same recursive BFS."""
 
 from pathlib import Path
 import sys
@@ -12,6 +12,7 @@ from .fixtures import TestRepository
 from .graph import build_graph, graph_lines
 from .repository import download_index
 from .resolver import ResolvedRepository
+from .reverse import reverse_index
 
 
 def load_repository(settings):
@@ -22,12 +23,13 @@ def load_repository(settings):
 
 
 def main(argv=None):
-    """Print BFS graph edges and report source/traversal errors."""
+    """Print reverse BFS edges across the entire selected repository."""
     settings = parse_args(argv)
     try:
         repository = load_repository(settings)
         root = repository.root(settings.package, settings.version)
-        graph = build_graph(root, repository.children, settings.max_depth)
+        reverse = reverse_index(repository)
+        graph = build_graph(root, reverse.__getitem__, settings.max_depth)
         print('\n'.join(graph_lines(graph)))
     except (OSError, ValueError, EOFError) as error:
         print(f'error: {error}', file=sys.stderr)
