@@ -17,3 +17,9 @@ jobs:
           python -m pip install flake8 pep8-naming radon
           python -m flake8 src tests --select E,F,N --ignore E402,W503 --max-line-length 80
           python -m radon cc src tests -s
+      - name: Compare three graphs with native APT
+        run: python scripts/compare_apt.py
+      - uses: actions/upload-artifact@v4
+        with:
+          name: native-apt-comparison
+          path: generated/comparison/

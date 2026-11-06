@@ -1,0 +1,23 @@
+[
+  {
+    "root": "bash@5.2.21-2ubuntu4",
+    "vertices": 15,
+    "edges": 27,
+    "edge_match": true,
+    "dot_edges": 40
+  },
+  {
+    "root": "coreutils@9.4-3ubuntu6",
+    "vertices": 10,
+    "edges": 16,
+    "edge_match": true,
+    "dot_edges": 37
+  },
+  {
+    "root": "grep@3.11-4build1",
+    "vertices": 5,
+    "edges": 6,
+    "edge_match": true,
+    "dot_edges": 25
+  }
+]

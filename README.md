@@ -1,6 +1,6 @@
 # Визуализатор зависимостей Ubuntu — вариант 12
 
-Практическая работа 2. Этап 4: Обратные зависимости.
+Практическая работа 2. Этап 5: PlantUML и ASCII.
 Python 3.12+, только стандартная библиотека для получения зависимостей.
 
 ## Подготовка и запуск
@@ -47,10 +47,10 @@ URL должен указывать именно на индекс пакето�
 
 ## Поведение этапа
 
-По полному индексу строятся обратные рёбра, затем выполняется тот же
-рекурсивный BFS от указанной версии. Выводятся пакеты, зависящие от неё,
-с учётом глубины. Это обратные зависимости в выбранном индексе,
-а не только в прямом графе корня.
+Создаются generated/ИМЯ.puml и generated/ИМЯ.svg; SVG открывается
+в браузере. По --ascii печатается дерево. Выводы этапов 1, 2 и 4 отключены.
+Для рисования нужны Java и tools/plantuml.jar. Зависимости получает
+само приложение; PlantUML только рисует уже построенный граф.
 
 Для тестового JSON версия каждой вершины равна 1. Пример: {"A": ["B"], "B": []}.
 Все вершины должны быть объявлены. Дубликаты рёбер удаляются.
@@ -69,14 +69,20 @@ URL должен указывать именно на индекс пакето�
 Для обычного имени выбирается наибольшая удовлетворяющая версия.
 При отсутствии подходящей зависимости выводится ошибка с её именем.
 
-Показать обратную цепочку C <- B <- A:
+## Рисование и три примера
+
+Установите Java и скачайте plantuml.jar с https://plantuml.com/download в папку tools.
+Используется встроенный Smetana: отдельный Graphviz не нужен.
+Бинарники, .venv, настройки IDE и generated не входят в Git.
 
 ```powershell
-.\run.bat --package C --version 1 --test-mode --repository examples/chain.json
+.\run.bat --package bash --version 5.2.21-2ubuntu4 --max-depth 2 --ascii
+.\run.bat --package coreutils --version 9.4-3ubuntu6 --max-depth 2 --ascii
+.\run.bat --package grep --version 3.11-4build1 --max-depth 2 --ascii
 ```
 
-Обратный поиск проверяет ограничения относительно точной выбранной версии корня,
-в том числе когда в индексе есть другая, более новая версия.
+Примеры PlantUML: examples/*.puml. Сравнение со штатным apt-cache: docs/comparison.md.
+Если браузер не открывается автоматически, откройте generated/*.svg вручную.
 
 ## Описание функций
 
@@ -109,13 +115,21 @@ URL должен указывать именно на индекс пакето�
 ### main.py
 
 - `load_repository`: Select a validated local fixture or a downloaded Ubuntu index.
-- `main`: Print reverse BFS edges across the entire selected repository.
+- `main`: Render the diagram and optional tree, suppressing earlier outputs.
 
 ### relations.py
 
 - `parse_atom`: Return name, architecture qualifier, operator and required version.
 - `parse_group`: Preserve every OR alternative in its original declaration order.
 - `provided_names`: Read unversioned or exact-version Provides, rejecting other operators.
+
+### render.py
+
+- `to_plantuml`: Use synthetic IDs and quoted labels, keeping every graph edge.
+- `ascii_tree`: Print branches once; distinguish ancestor cycles from shared nodes.
+- `node_marker`: Give ancestor cycles precedence over shared-subgraph markers.
+- `render_svg`: Run local PlantUML with a timeout and validate its SVG output.
+- `save_diagram`: Publish successful SVG and PlantUML, then open the SVG in a browser.
 
 ### repository.py
 

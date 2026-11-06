@@ -1,0 +1,15 @@
+@startuml
+!pragma layout smetana
+left to right direction
+rectangle "grep@3.11-4build1" as n0
+rectangle "libc6@2.39-0ubuntu8" as n1
+rectangle "libpcre2-8-0@10.42-4ubuntu2" as n2
+rectangle "libgcc-s1@14-20240412-0ubuntu1" as n3
+rectangle "gcc-14-base@14-20240412-0ubuntu1" as n4
+n0 --> n1
+n0 --> n2
+n1 --> n3
+n2 --> n1
+n3 --> n4
+n3 --> n1
+@enduml

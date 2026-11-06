@@ -1,0 +1,7 @@
+coreutils
+  PreDepends: libacl1
+  PreDepends: libattr1
+  PreDepends: libc6
+  PreDepends: libgmp10
+  PreDepends: libselinux1
+  PreDepends: libssl3t64

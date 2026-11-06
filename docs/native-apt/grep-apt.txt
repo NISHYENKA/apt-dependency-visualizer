@@ -1,0 +1,3 @@
+grep
+  PreDepends: libc6
+  PreDepends: libpcre2-8-0
