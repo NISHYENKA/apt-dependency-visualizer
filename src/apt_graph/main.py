@@ -1,4 +1,4 @@
-"""Stage 2: display direct dependencies of an exact Ubuntu package version."""
+"""Stage 3: build the versioned graph with recursive breadth-first search."""
 
 from pathlib import Path
 import sys
@@ -8,19 +8,27 @@ if __package__ in (None, ''):
     __package__ = 'src.apt_graph'
 
 from .config import parse_args
-from .repository import AptRepository, download_index
+from .fixtures import TestRepository
+from .graph import build_graph, graph_lines
+from .repository import download_index
+from .resolver import ResolvedRepository
+
+
+def load_repository(settings):
+    """Select a validated local fixture or a downloaded Ubuntu index."""
+    if settings.test_mode:
+        return TestRepository(settings.repository)
+    return ResolvedRepository(download_index(settings.repository))
 
 
 def main(argv=None):
-    """Fetch direct dependency declarations or report a readable error."""
+    """Print BFS graph edges and report source/traversal errors."""
     settings = parse_args(argv)
     try:
-        if settings.test_mode:
-            raise ValueError('test repository support starts at stage 3')
-        repository = AptRepository(download_index(settings.repository))
+        repository = load_repository(settings)
         root = repository.root(settings.package, settings.version)
-        for group in repository.direct(root):
-            print(group)
+        graph = build_graph(root, repository.children, settings.max_depth)
+        print('\n'.join(graph_lines(graph)))
     except (OSError, ValueError, EOFError) as error:
         print(f'error: {error}', file=sys.stderr)
         return 1

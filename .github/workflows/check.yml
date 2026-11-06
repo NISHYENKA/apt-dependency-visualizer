@@ -1,0 +1,19 @@
+name: Check coursework
+on: [push, workflow_dispatch]
+permissions:
+  contents: read
+jobs:
+  test:
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Tests and Debian version oracle
+        run: python -m unittest discover -s tests -v
+      - name: Code style and complexity
+        run: |
+          python -m pip install flake8 pep8-naming radon
+          python -m flake8 src tests --select E,F,N --ignore E402,W503 --max-line-length 80
+          python -m radon cc src tests -s
