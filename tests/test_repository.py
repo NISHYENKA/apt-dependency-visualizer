@@ -61,3 +61,9 @@ class RepositoryTests(unittest.TestCase):
     def test_no_dependencies(self):
         """A valid package without mandatory relationships is a leaf."""
         self.assertEqual(declarations({'package': 'leaf'}), [])
+
+    def test_corrupt_compression(self):
+        """Corrupt gzip/xz data becomes a readable application error."""
+        for data in (b'\xfd7zXZ\x00broken', b'\x1f\x8bbroken'):
+            with self.subTest(data=data), self.assertRaises(ValueError):
+                unpack_index(data)

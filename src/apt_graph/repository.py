@@ -19,8 +19,11 @@ def unpack_index(data):
         stream = gzip.GzipFile(fileobj=stream)
     elif data.startswith(b'\xfd7zXZ\x00'):
         stream = lzma.LZMAFile(stream)
-    with stream:
-        content = stream.read(expanded_limit + 1)
+    try:
+        with stream:
+            content = stream.read(expanded_limit + 1)
+    except (lzma.LZMAError, OSError, EOFError) as error:
+        raise ValueError('corrupt compressed Packages index') from error
     if len(content) > expanded_limit:
         raise ValueError('expanded Packages index is too large')
     return content.decode('utf-8')

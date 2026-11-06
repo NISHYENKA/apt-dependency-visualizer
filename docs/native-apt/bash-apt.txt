@@ -1,0 +1,5 @@
+bash
+  PreDepends: libc6
+  PreDepends: libtinfo6
+  Depends: base-files
+  Depends: debianutils

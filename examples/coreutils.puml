@@ -1,0 +1,30 @@
+@startuml
+!pragma layout smetana
+left to right direction
+rectangle "coreutils@9.4-3ubuntu6" as n0
+rectangle "libacl1@2.3.2-1build1" as n1
+rectangle "libattr1@1:2.5.2-1build1" as n2
+rectangle "libc6@2.39-0ubuntu8" as n3
+rectangle "libgmp10@2:6.3.0+dfsg-2ubuntu6" as n4
+rectangle "libselinux1@3.5-2ubuntu2" as n5
+rectangle "libssl3t64@3.0.13-0ubuntu3" as n6
+rectangle "libgcc-s1@14-20240412-0ubuntu1" as n7
+rectangle "libpcre2-8-0@10.42-4ubuntu2" as n8
+rectangle "gcc-14-base@14-20240412-0ubuntu1" as n9
+n0 --> n1
+n0 --> n2
+n0 --> n3
+n0 --> n4
+n0 --> n5
+n0 --> n6
+n1 --> n3
+n2 --> n3
+n3 --> n7
+n4 --> n3
+n5 --> n3
+n5 --> n8
+n6 --> n3
+n7 --> n9
+n7 --> n3
+n8 --> n3
+@enduml

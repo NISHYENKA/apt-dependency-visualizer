@@ -1,4 +1,4 @@
-"""Stage 4: show reverse dependencies using the same recursive BFS."""
+"""Stage 5: render the forward graph with PlantUML and optional ASCII."""
 
 from pathlib import Path
 import sys
@@ -9,10 +9,10 @@ if __package__ in (None, ''):
 
 from .config import parse_args
 from .fixtures import TestRepository
-from .graph import build_graph, graph_lines
+from .graph import build_graph
+from .render import ascii_tree, save_diagram
 from .repository import download_index
 from .resolver import ResolvedRepository
-from .reverse import reverse_index
 
 
 def load_repository(settings):
@@ -23,14 +23,16 @@ def load_repository(settings):
 
 
 def main(argv=None):
-    """Print reverse BFS edges across the entire selected repository."""
+    """Render the diagram and optional tree, suppressing earlier outputs."""
     settings = parse_args(argv)
     try:
         repository = load_repository(settings)
         root = repository.root(settings.package, settings.version)
-        reverse = reverse_index(repository)
-        graph = build_graph(root, reverse.__getitem__, settings.max_depth)
-        print('\n'.join(graph_lines(graph)))
+        graph = build_graph(root, repository.children, settings.max_depth)
+        destination = save_diagram(graph, settings.package)
+        print(f'Image: {destination}')
+        if settings.ascii:
+            print(ascii_tree(graph, root))
     except (OSError, ValueError, EOFError) as error:
         print(f'error: {error}', file=sys.stderr)
         return 1

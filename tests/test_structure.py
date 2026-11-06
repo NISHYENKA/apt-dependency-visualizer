@@ -18,7 +18,7 @@ class StructureTests(unittest.TestCase):
 
     def test_python_limits(self):
         """Inspect size, arguments, docstrings and comparison literals."""
-        for folder in ('src', 'tests'):
+        for folder in ('src', 'tests', 'scripts'):
             for path in (root / folder).rglob('*.py'):
                 source = path.read_text(encoding='utf-8')
                 self.assertLessEqual(len(source.splitlines()), 1000, str(path))
