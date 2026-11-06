@@ -1,6 +1,6 @@
 # Визуализатор зависимостей Ubuntu — вариант 12
 
-Практическая работа 2. Этап 1: Конфигурация CLI.
+Практическая работа 2. Этап 2: Прямые зависимости apt.
 Python 3.12+, только стандартная библиотека для получения зависимостей.
 
 ## Подготовка и запуск
@@ -47,7 +47,10 @@ URL должен указывать именно на индекс пакето�
 
 ## Поведение этапа
 
-Выводятся шесть настроек ключ=значение. Сетевых запросов нет.
+Через HTTP читается индекс Packages, Packages.gz или Packages.xz.
+Для указанной точной версии выводятся Depends и Pre-Depends.
+Альтернативы и ограничения версий сохраняются.
+Тестовый режим реализуется с этапа 3; на этом этапе сообщает об ошибке.
 
 ## Описание функций
 
@@ -58,9 +61,23 @@ URL должен указывать именно на индекс пакето�
 - `validate_settings`: Check names, exact version and repository location for both modes.
 - `parse_args`: Return validated CLI options or terminate with argparse error code 2.
 
+### control.py
+
+- `parse_stanzas`: Unfold continuation lines and reject malformed or duplicate fields.
+- `parse_packages`: Index binary package records by name and exact version.
+- `declarations`: Return mandatory Pre-Depends and Depends as intact OR groups.
+
 ### main.py
 
-- `main`: Validate settings and display the six key-value pairs.
+- `main`: Fetch direct dependency declarations or report a readable error.
+
+### repository.py
+
+- `unpack_index`: Recognize gzip/xz by magic bytes and bound decompressed size.
+- `download_index`: Download one Packages index with a timeout and size limit.
+- `__init__`: Parse an already downloaded index without running apt or dpkg.
+- `root`: Require an exact version and show available versions on failure.
+- `direct`: Return direct declarations without discarding version constraints.
 
 ## Проверки
 
